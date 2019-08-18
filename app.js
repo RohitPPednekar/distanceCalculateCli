@@ -89,7 +89,19 @@ function destinationLocationInput(){
              destinationLocationAxis.x = axisArr[0]; 
              destinationLocationAxis.y = axisArr[1];
              console.log('User Input Data : ' + JSON.stringify(destinationLocationAxis));
-             //evaluateDistance();
+             evaluateDistance();
       })
 }
 
+function evaluateDistance(){
+    allignCommutersBusRouteWise();
+}
+
+function allignCommutersBusRouteWise(){
+
+//squared distance
+const sqDist = (pointa, pointb) => (pointa.x-pointb.x)**2+(pointa.y-pointb.y)**2;
+//sorting
+var sortedCommuterAxes = commutersAxis.sort((pointa, pointb) => sqDist(busLocationAxis,pointa)-sqDist(busLocationAxis,pointb));
+ console.log("allignCommutersBusRouteWise--->"+JSON.stringify(sortedCommuterAxes))
+}
