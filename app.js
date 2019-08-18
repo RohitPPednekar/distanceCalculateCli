@@ -22,7 +22,7 @@ function commuterLocationInput(){
           var axisData = answers['data'];
              var axisArr = axisData.toString().split(",");
              commutersAxis.push({x: axisArr[0], y: axisArr[1]});
-             console.log('User Input Data : ' + JSON.stringify(commutersAxis));
+             
              callCommuterRecursive();
       })
 }
@@ -40,7 +40,7 @@ function callCommuterRecursive(){
             commuterLocationInput();
             
         }else if(answers['dataRecursive'] == "no"){
-            console.log("CALL buslocation()");
+            
             //TODO call the busLocationInput()
             busLocationInput();
         }else{
@@ -68,7 +68,7 @@ function busLocationInput(){
              var axisArr = axisData.toString().split(",");
              busLocationAxis.x = axisArr[0]; 
              busLocationAxis.y = axisArr[1];
-             console.log('User Input Data : ' + JSON.stringify(busLocationAxis));
+             
              destinationLocationInput();
       })
 }
@@ -89,20 +89,38 @@ function destinationLocationInput(){
              var axisArr = axisData.toString().split(",");
              destinationLocationAxis.x = axisArr[0]; 
              destinationLocationAxis.y = axisArr[1];
-             console.log('User Input Data : ' + JSON.stringify(destinationLocationAxis));
              evaluateDistance();
       })
 }
 
+// Evaluating the distance on the basis:-
+// 1. first sorting commuters location who lies on the way of bus starting point
+// 2. distance between the bus location to first commuter's location + all the commuters locations + last commuter's location to destination location
 function evaluateDistance(){
     
     allignCommutersBusRouteWise().then((data)=>{
         //Calculating first distance between bus location and first on the way coming commuter's location
         distance+= getDistance(busLocationAxis.x, busLocationAxis.y, data[0].x, data[0].y);
-        console.log("distance-->"+distance)
+        
+        //Looping between all the commuters location axis to get the distance between them on their different routes
+        for(var s =0; s<data.length; s++){
+            //Condition to ensure that once last commuter axis iterates not to add as no other commuter ahead instead go else for destination location axis 
+            if(data[s+1]!=undefined){
+                //sumed up all distance between commuters till last commuter
+                distance+= getDistance(data[s].x, data[s].y, data[s+1].x, data[s+1].y);
+
+            }else{
+                //To add the distance of last commuter's location to destination location axis
+                distance+= getDistance(data[s].x, data[s].y, destinationLocationAxis.x, destinationLocationAxis.y);
+            }
+        }
+        //Total distance
+        console.log("Total distance travelled by cab is -->"+distance)
     });
 }
 
+
+//Sorting all the commuters location axis as per commuters who lies on the way route of bus's starting location axis
 function allignCommutersBusRouteWise(){
     return new Promise((resolve,reject)=>{
         //squared distance
@@ -110,7 +128,6 @@ function allignCommutersBusRouteWise(){
         //sorting of commuters location as per bus location
         var sortedCommuterAxes = commutersAxis.sort((pointa, pointb) => sqDist(busLocationAxis,pointa)-sqDist(busLocationAxis,pointb));
         resolve(sortedCommuterAxes);
-        console.log("allignCommutersBusRouteWise--->"+JSON.stringify(sortedCommuterAxes))
     });
 }
 
