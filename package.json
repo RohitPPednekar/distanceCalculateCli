@@ -1,0 +1,11 @@
+{
+  "name": "calculatecli",
+  "version": "1.0.0",
+  "description": "node cli program to calculate distance from the bus location to commuters locations to their destination",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rohit Pednekar",
+  "license": "ISC"
+}
